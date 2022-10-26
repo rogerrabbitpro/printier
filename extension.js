@@ -5,11 +5,11 @@ function activate(context) {
     "printier.Remove Print Statements",
     async function () {
       const editor = vscode.window.activeTextEditor;
+      const document = editor.document;
       if (!editor) {
         return;
       }
-      const document = editor.document;
-      const currentLang = document.languageId;
+      const currentLang = getProgrammingLanguage(document);
       if (currentLang !== "javascript") {
         vscode.window.showInformationMessage(
           `${currentLang} is currently not supported.`
@@ -17,32 +17,62 @@ function activate(context) {
         return;
       }
 
-      const text = document.getText();
-      const regex =
-        /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
-      const match = [...text.matchAll(regex)];
-      const ranges = [];
-      match.forEach((item) => {
-        ranges.push(
-          new vscode.Range(
-            document.positionAt(item.index),
-            document.positionAt(item.index + item[0].length)
-          )
-        );
-      });
-      editor.edit((editBuilder) => {
-        ranges.forEach((range) => {
-          editBuilder.delete(range);
-        });
-      });
-      // Format the document
-      await vscode.commands.executeCommand("editor.action.formatDocument");
+      const ranges = getAllPrintStatements(document);
+      deleteAllPrintStatements(editor, ranges);
+      await formatDocument();
       // Display a message box to the user
       vscode.window.showInformationMessage("Removed all logs statements");
       vscode.TextEdit;
     }
   );
   context.subscriptions.push(disposable);
+}
+
+function getProgrammingLanguage(document) {
+  return document.languageId;
+}
+
+function getRegex(document) {
+  const lang = getProgrammingLanguage(document);
+
+  let regex;
+  switch (lang) {
+    case "javascript":
+      regex =
+        /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
+      break;
+    default:
+      regex = undefined;
+  }
+  return regex;
+}
+
+function getAllPrintStatements(document) {
+  const text = document.getText();
+  const regex = getRegex(document);
+  const match = [...text.matchAll(regex)];
+  const ranges = [];
+  match.forEach((item) => {
+    ranges.push(
+      new vscode.Range(
+        document.positionAt(item.index),
+        document.positionAt(item.index + item[0].length)
+      )
+    );
+  });
+  return ranges;
+}
+
+function deleteAllPrintStatements(editor, ranges) {
+  editor.edit((editBuilder) => {
+    ranges.forEach((range) => {
+      editBuilder.delete(range);
+    });
+  });
+}
+
+async function formatDocument() {
+  await vscode.commands.executeCommand("editor.action.formatDocument");
 }
 
 // This method is called when your extension is deactivated
