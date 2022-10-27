@@ -1,5 +1,7 @@
 const vscode = require("vscode");
 
+const supportedLangs = ["javascript", "typescript", "python"];
+
 function activate(context) {
   let disposable = vscode.commands.registerCommand(
     "printier.Remove Print Statements",
@@ -10,17 +12,17 @@ function activate(context) {
         return;
       }
       const currentLang = getProgrammingLanguage(document);
-      if (currentLang !== "javascript") {
+      if (!supportedLangs.includes(currentLang)) {
         vscode.window.showInformationMessage(
           `${currentLang} is currently not supported.`
         );
         return;
       }
-
       const ranges = getAllPrintStatements(document);
       deleteAllPrintStatements(editor, ranges);
       await formatDocument(ranges, editor);
       // Display a message box to the user
+
       vscode.window.showInformationMessage("Removed all logs statements");
       vscode.TextEdit;
     }
@@ -34,12 +36,18 @@ function getProgrammingLanguage(document) {
 
 function getRegex(document) {
   const lang = getProgrammingLanguage(document);
-
   let regex;
   switch (lang) {
     case "javascript":
       regex =
         /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
+      break;
+    case "typescript":
+      regex =
+        /console.(log|debug|info|warn|error|assert|dir|dirxml|trace|group|groupEnd|time|timeEnd|profile|profileEnd|count)\((.*)\);?/g;
+      break;
+    case "python":
+      regex = /print\((.*)\)?/g;
       break;
     default:
       regex = undefined;
@@ -73,9 +81,12 @@ function deleteAllPrintStatements(editor, ranges) {
 
 async function formatDocument(ranges, editor) {
   // Set the cursor position to the first occurence of the console statement
-  const pos = ranges[0].start
-  const selection = new vscode.Selection(pos, pos)
-  editor.selection = selection
+  if (ranges.length === 0) {
+    return;
+  }
+  const pos = ranges[0].start;
+  const selection = new vscode.Selection(pos, pos);
+  editor.selection = selection;
   // Iterate over the number of ranges to delete the emptied lines
   ranges.forEach(async () => {
     await vscode.commands.executeCommand("editor.action.deleteLines");
