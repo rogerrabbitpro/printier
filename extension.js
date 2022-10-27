@@ -19,7 +19,7 @@ function activate(context) {
 
       const ranges = getAllPrintStatements(document);
       deleteAllPrintStatements(editor, ranges);
-      await formatDocument();
+      await formatDocument(ranges, editor);
       // Display a message box to the user
       vscode.window.showInformationMessage("Removed all logs statements");
       vscode.TextEdit;
@@ -71,8 +71,15 @@ function deleteAllPrintStatements(editor, ranges) {
   });
 }
 
-async function formatDocument() {
-  await vscode.commands.executeCommand("editor.action.formatDocument");
+async function formatDocument(ranges, editor) {
+  // Set the cursor position to the first occurence of the console statement
+  const pos = ranges[0].start
+  const selection = new vscode.Selection(pos, pos)
+  editor.selection = selection
+  // Iterate over the number of ranges to delete the emptied lines
+  ranges.forEach(async () => {
+    await vscode.commands.executeCommand("editor.action.deleteLines");
+  });
 }
 
 // This method is called when your extension is deactivated
