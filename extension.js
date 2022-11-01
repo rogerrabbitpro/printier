@@ -1,6 +1,6 @@
 const vscode = require("vscode");
 
-const supportedLangs = ["javascript", "typescript", "python"];
+const supportedLangs = ["javascript", "typescript", "python", "java"];
 
 function activate(context) {
   let disposable = vscode.commands.registerCommand(
@@ -21,7 +21,7 @@ function activate(context) {
       const ranges = getAllPrintStatements(document);
       deleteAllPrintStatements(editor, ranges);
       // saves the document
-      const isSaved = (await document.save()).valueOf()
+      const isSaved = (await document.save()).valueOf();
       if (isSaved) {
         formatDocument(ranges, editor, document);
       }
@@ -51,6 +51,9 @@ function getRegex(document) {
       break;
     case "python":
       regex = /print\((.*)\)?/g;
+      break;
+    case "java":
+      regex = /System.out.(println|print|printf)\((.*)\);?/g;
       break;
     default:
       regex = undefined;
