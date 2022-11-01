@@ -1,6 +1,6 @@
 const vscode = require("vscode");
 
-const supportedLangs = ["javascript", "typescript", "python", "java"];
+const supportedLangs = ["javascript", "typescript", "python", "java", "c", "cpp"];
 
 function activate(context) {
   let disposable = vscode.commands.registerCommand(
@@ -20,7 +20,7 @@ function activate(context) {
       }
       const ranges = getAllPrintStatements(document);
       deleteAllPrintStatements(editor, ranges);
-      // saves the document
+      // save the document
       const isSaved = (await document.save()).valueOf();
       if (isSaved) {
         formatDocument(ranges, editor, document);
@@ -54,6 +54,12 @@ function getRegex(document) {
       break;
     case "java":
       regex = /System.out.(println|print|printf)\((.*)\);?/g;
+      break;
+    case "c":
+      regex = /printf\((.*)\);?/g;
+      break;
+    case "cpp":
+      regex = /cout.*<<*.*;?/g;
       break;
     default:
       regex = undefined;
@@ -93,8 +99,8 @@ function formatDocument(ranges, editor, document) {
   // Iterate over the number of ranges to delete the emptied lines
   // Will only delete the lines that are empty
   ranges.forEach(async (range) => {
-    const pos = range.start;
-    const selection = new vscode.Selection(pos, pos);
+    const start = range.start;
+    const selection = new vscode.Selection(start, start);
     editor.selection = selection;
     if (document.lineAt(range.start.line).text.trim() === "") {
       await vscode.commands.executeCommand("editor.action.deleteLines");
