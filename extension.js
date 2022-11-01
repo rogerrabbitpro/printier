@@ -99,16 +99,16 @@ function deleteAllPrintStatements(editor, ranges) {
 }
 
 function formatDocument(ranges, editor, document) {
-  // Set the cursor position to the first occurence of the console statement
   if (ranges.length === 0) {
     return;
   }
+  // Reversing the array to start deleting the empty lines from last
+  ranges.reverse();
   // Iterate over the number of ranges to delete the empty lines
   ranges.forEach(async (range) => {
     const start = range.start;
-    const selection = new vscode.Selection(start, start);
-    editor.selection = selection;
-    if (document.lineAt(range.start.line).text.trim() === "") {
+    editor.selection = new vscode.Selection(start, start);
+    if (document.lineAt(range.start.line).isEmptyOrWhitespace) {
       await vscode.commands.executeCommand("editor.action.deleteLines");
     }
   });

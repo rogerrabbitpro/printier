@@ -14,5 +14,5 @@ Thats it !
 1. No need of configuration. Everything works out of the box.
 2. No need to specify which programming language you are currently using.
 
-## Installtion
+## Installation
 Open VSCode and type ctrl+P, type ext install zain2323.printier.
