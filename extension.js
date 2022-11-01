@@ -90,13 +90,15 @@ function formatDocument(ranges, editor, document) {
   if (ranges.length === 0) {
     return;
   }
-  const pos = ranges[0].start;
-  const selection = new vscode.Selection(pos, pos);
-  editor.selection = selection;
   // Iterate over the number of ranges to delete the emptied lines
+  // Will only delete the lines that are empty
   ranges.forEach(async (range) => {
-    if (!document.lineAt(ranges[0].start.line))
+    const pos = range.start;
+    const selection = new vscode.Selection(pos, pos);
+    editor.selection = selection;
+    if (document.lineAt(range.start.line).text.trim() === "") {
       await vscode.commands.executeCommand("editor.action.deleteLines");
+    }
   });
 }
 
