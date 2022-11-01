@@ -20,9 +20,12 @@ function activate(context) {
       }
       const ranges = getAllPrintStatements(document);
       deleteAllPrintStatements(editor, ranges);
-      await formatDocument(ranges, editor);
+      // saves the document
+      const isSaved = (await document.save()).valueOf()
+      if (isSaved) {
+        formatDocument(ranges, editor, document);
+      }
       // Display a message box to the user
-
       vscode.window.showInformationMessage("Removed all logs statements");
       vscode.TextEdit;
     }
@@ -79,7 +82,7 @@ function deleteAllPrintStatements(editor, ranges) {
   });
 }
 
-async function formatDocument(ranges, editor) {
+function formatDocument(ranges, editor, document) {
   // Set the cursor position to the first occurence of the console statement
   if (ranges.length === 0) {
     return;
@@ -88,8 +91,9 @@ async function formatDocument(ranges, editor) {
   const selection = new vscode.Selection(pos, pos);
   editor.selection = selection;
   // Iterate over the number of ranges to delete the emptied lines
-  ranges.forEach(async () => {
-    await vscode.commands.executeCommand("editor.action.deleteLines");
+  ranges.forEach(async (range) => {
+    if (!document.lineAt(ranges[0].start.line))
+      await vscode.commands.executeCommand("editor.action.deleteLines");
   });
 }
 
