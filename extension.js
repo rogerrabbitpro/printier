@@ -1,6 +1,13 @@
 const vscode = require("vscode");
 
-const supportedLangs = ["javascript", "typescript", "python", "java", "c", "cpp"];
+const supportedLangs = [
+  "javascript",
+  "typescript",
+  "python",
+  "java",
+  "c",
+  "cpp",
+];
 
 function activate(context) {
   let disposable = vscode.commands.registerCommand(
@@ -96,8 +103,7 @@ function formatDocument(ranges, editor, document) {
   if (ranges.length === 0) {
     return;
   }
-  // Iterate over the number of ranges to delete the emptied lines
-  // Will only delete the lines that are empty
+  // Iterate over the number of ranges to delete the empty lines
   ranges.forEach(async (range) => {
     const start = range.start;
     const selection = new vscode.Selection(start, start);
