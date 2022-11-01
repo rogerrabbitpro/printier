@@ -9,6 +9,8 @@ Removes all of annoying print statements you used while debugging your program. 
 
 Thats it !
 
+![](assets/printier.gif)
+
 ## Features
 
 1. No need of configuration. Everything works out of the box.
