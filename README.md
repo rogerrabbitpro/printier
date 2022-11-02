@@ -9,7 +9,7 @@ Removes all of annoying print statements you used while debugging your program. 
 
 Thats it !
 
-![](assets/printier.gif)
+![](https://raw.githubusercontent.com/zain2323/printier/main/images/printier.gif)
 
 ## Features
 

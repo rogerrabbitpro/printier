@@ -1,6 +1,7 @@
 {
   "name": "printier",
   "displayName": "printier",
+  "publisher": "zain2323",
   "description": "Remove print statements from your project",
   "version": "0.0.1",
   "engines": {
