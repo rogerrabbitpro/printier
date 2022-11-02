@@ -3,6 +3,7 @@
   "displayName": "printier",
   "publisher": "zain2323",
   "description": "Remove print statements from your project",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/zain2323/printier.git"
