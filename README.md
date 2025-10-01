@@ -1,6 +1,6 @@
 # Printier
 
-Removes all of annoying print statements you used while debugging your program. Currently supports JavaScript, Python, Java, C/C++
+Removes all of annoying print statements you used while debugging your program. Currently supports JavaScript, Python, Java, C/C++, Lua
 
 # How to use
 
