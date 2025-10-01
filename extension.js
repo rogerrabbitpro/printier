@@ -7,6 +7,7 @@ const supportedLangs = [
   "java",
   "c",
   "cpp",
+  "lua",
 ];
 
 function activate(context) {
@@ -67,6 +68,9 @@ function getRegex(document) {
       break;
     case "cpp":
       regex = /cout.*<<*.*;?/g;
+      break;
+    case "lua":
+      regex = /print\((.*)\);?/g;
       break;
     default:
       regex = undefined;
